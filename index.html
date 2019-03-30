@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>もぐらたたきゲーム</title>
+	<style media="screen">
+		h1 {
+			text-align: center;
+		}
+
+		.container {
+			width: 384px;
+			margin: 0px auto;
+		}
+
+		.wrapper {
+			margin: 0px auto;
+			display: flex;
+		}
+
+		img {
+			width: 128px;
+			height: 128px;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<h1>もぐらたたきゲーム</h1>
+	スコア：
+	<span id="score">0</span>
+	ゲーム時間：
+	<span id="time">0</span>
+	<span id="message"></span>
+	<hr>
+	<input type="button" value="ゲームスタート" onclick="gamestart()" />
+
+	<div class="container">
+		<div class="wrapper">
+			<div><img class="mogura" src="images/ana.png"></div>
+			<div><img class="mogura" src="images/ana.png"></div>
+			<div><img class="mogura" src="images/ana.png"></div>
+		</div>
+		<div class="wrapper">
+			<div><img class="mogura" src="images/ana.png"></div>
+			<div><img class="mogura" src="images/ana.png"></div>
+			<div><img class="mogura" src="images/ana.png"></div>
+		</div>
+		<div class="wrapper">
+			<div><img class="mogura" src="images/ana.png"></div>
+			<div><img class="mogura" src="images/ana.png"></div>
+			<div><img class="mogura" src="images/ana.png"></div>
+		</div>
+	</div>
+	<script>
+		//dom取得
+		var moguras = document.getElementsByClassName("mogura");
+		var score = document.getElementById("score");
+		var timeobj = document.getElementById("time");
+		var msgobj = document.getElementById("message");
+		const GAME_TIME_S = 10;
+		const M_HIDDEN_TIME_MS = 1000;
+		//スコアカウント
+		var count = 0;
+
+		//残り時間(秒)
+		var time = GAME_TIME_S;
+
+		//終了フラグ
+		var endflg = false;
+
+		var timerMogura;
+		var timerMogura2;
+		var timerGame;
+
+		//イベント登録
+		for (var i = 0; i < moguras.length; i++) {
+			moguras[i].addEventListener('click', moguraJudge);
+		}
+
+		//もぐらを表示する処理
+		function moguraDasu() {
+			var random = Math.floor(Math.random() * moguras.length); // ランダム
+			let masu = moguras[random];
+			masu.src = "images/mogumogu.png";
+			setTimeout(function () { moguraKakusu(masu); }, M_HIDDEN_TIME_MS);
+		}
+
+		//残り時間カウント処理
+		function gametime() {
+			time--;
+			timeobj.innerHTML = time;
+			if (time == 0) {
+				endflg = true;
+				msgobj.innerHTML = "　　【ゲーム終了！！！！】";
+				stopTimer();
+			}
+		}
+
+		//画像変更関数
+		function moguraKakusu(masu) {
+			masu.src = "images/ana.png"
+		}
+
+		//判定関数
+		function moguraJudge() {
+			let obj = event.target;
+			if (obj.src.indexOf("mogumogu") > 0 && endflg == false) {
+				count++;
+			}
+			score.innerHTML = count;
+			moguraKakusu(obj.src); 
+		}
+
+		//ゲームスタートボタンクリックイベント
+		var gamestart = function () {
+			init();
+			if (!endflg) {
+				stopTimer();
+			}
+			startTimer();
+		}
+
+		//タイマースタート
+		function startTimer() {
+			timerMogura = setInterval(moguraDasu, 1000); // 1000ミリ秒に一回実行する
+			timerMogura2 = setInterval(moguraDasu, 700); // 1000ミリ秒に一回実行する
+			timerGame = setInterval(gametime, 1000); // 1000ミリ秒に一回実行する
+		}
+
+		//タイマーストップ
+		function stopTimer() {
+			clearInterval(timerMogura);
+			clearInterval(timerMogura2);
+			clearInterval(timerGame);
+		}
+
+		//初期化
+		function init() {
+			count = 0;
+			time = GAME_TIME_S;
+			endflg = false;
+			timeobj.innerHTML = time;
+			msgobj.innerHTML = "";
+			score.innerHTML = count;
+		}
+	</script>
+</body>
+
+</html>
